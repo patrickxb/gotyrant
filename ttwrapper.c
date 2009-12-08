@@ -1,5 +1,75 @@
+/**
+ * Copyright 2009 Patrick Crosby, XB Labs LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include "ttwrapper.h"
 #include <tcrdb.h>
+
+/* Tokyo Cabinet Maps */
+
+void* 
+xtc_mapnew()
+{
+        return tcmapnew();
+}
+
+void 
+xtc_mapput(void* cols, const char* name, const char* value)
+{
+        tcmapput2(cols, name, value);
+}
+
+void
+xtc_mapdel(void* cols)
+{
+        tcmapdel(cols);
+}
+
+const char* 
+xtc_mapget2(void* cols, const char* name)
+{
+        return tcmapget2(cols, name);
+}
+
+void 
+xtc_mapiterinit(void* map)
+{
+        tcmapiterinit(map);
+}
+
+const char*
+xtc_mapiternext2(void* map)
+{
+        return tcmapiternext2(map);
+}
+
+/* Tokyo Cabinet Lists */
+
+int
+xtc_listnum(void* list)
+{
+        return tclistnum(list);
+}
+
+const char* 
+xtc_listval(void* list, int index)
+{
+        return tclistval2(list, index);
+}
+
+/* Tokyo Tyrant new/open/close/del */
 
 void*
 xtcrdb_new()
@@ -25,6 +95,8 @@ xtcrdb_del(void* rdb)
         tcrdbdel(rdb);
 }
 
+/* Tokyo Tyrant errors */
+
 int
 xtcrdb_ecode(void* rdb)
 {
@@ -37,47 +109,21 @@ xtcrdb_errmsg(int ecode)
         return tcrdberrmsg(ecode);
 }
 
+/* Tokyo Tyrant tables */
+
 void* 
-xtc_mapnew()
+xtcrdb_tblget(void* connection, const char* pkey)
 {
-        return tcmapnew();
-}
-
-void
-xtc_mapdel(void* cols)
-{
-        tcmapdel(cols);
-}
-
-void 
-xtc_mapput(void* cols, const char* name, const char* value)
-{
-        tcmapput2(cols, name, value);
-}
-
-
-const char* 
-xtc_mapget2(void* cols, const char* name)
-{
-        return tcmapget2(cols, name);
-}
-
-void 
-xtc_mapiterinit(void* map)
-{
-        tcmapiterinit(map);
-}
-
-const char*
-xtc_mapiternext2(void* map)
-{
-        return tcmapiternext2(map);
+        // XXX from sample code, but is this necessary??? strlen?
+        char pkbuf[256];
+        int pksiz = sprintf(pkbuf, "%s", pkey);
+        return tcrdbtblget(connection, pkbuf, pksiz);
 }
 
 int 
 xtcrdb_tblput(void* rdb, const char* pkey, void* cols)
 {
-        // XXX from sample code, but is this necessary??? strlen?
+        // XXX from sample code, I assume for safety...
         char pkbuf[256];
         int pksiz = sprintf(pkbuf, "%s", pkey);
         return tcrdbtblput(rdb, pkbuf, pksiz, cols);
@@ -86,11 +132,13 @@ xtcrdb_tblput(void* rdb, const char* pkey, void* cols)
 int 
 xtcrdb_tblputkeep(void* rdb, const char* pkey, void* cols)
 {
-        // XXX from sample code, but is this necessary??? strlen?
+        // XXX from sample code, I assume for safety...
         char pkbuf[256];
         int pksiz = sprintf(pkbuf, "%s", pkey);
         return tcrdbtblputkeep(rdb, pkbuf, pksiz, cols);
 }
+
+/* Tokyo Tyrant queries */
 
 void* 
 xtcrdb_qrynew(void* rdb)
@@ -109,6 +157,14 @@ xtcrdb_qrysetlimit(void* query, int limit, int offset)
 {
         tcrdbqrysetlimit(query, limit, offset);
 }
+
+void*
+xtcrdb_qrysearch(void* query)
+{
+        return tcrdbqrysearch(query);
+}
+
+/* Tokyo Tyrant query conditions */
 
 int 
 x_streq() 
@@ -134,29 +190,5 @@ x_numlt()
         return RDBQCNUMLT;
 }
 
-void*
-xtcrdb_qrysearch(void* query)
-{
-        return tcrdbqrysearch(query);
-}
 
-int
-xtc_listnum(void* list)
-{
-        return tclistnum(list);
-}
 
-const char* 
-xtc_listval(void* list, int index)
-{
-        return tclistval2(list, index);
-}
-
-void* 
-xtcrdb_tblget(void* connection, const char* pkey)
-{
-        // XXX from sample code, but is this necessary??? strlen?
-        char pkbuf[256];
-        int pksiz = sprintf(pkbuf, "%s", pkey);
-        return tcrdbtblget(connection, pkbuf, pksiz);
-}

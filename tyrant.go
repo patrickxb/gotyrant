@@ -1,13 +1,28 @@
+/**
+ * Copyright 2009 Patrick Crosby, XB Labs LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package tyrant
+
+// this comment coming up isn't really a comment...tells C package what to include
 
 // #include "ttwrapper.h"
 import "C"
 
 import "fmt"
 import "unsafe"
-
-// this doesn't work...
-//type Connection unsafe.Pointer;
 
 type Connection struct {
         Tyrant unsafe.Pointer;
@@ -81,12 +96,6 @@ func (connection *Connection) Create(primary_key string, columns ColumnMap) (ok 
         C.xtc_mapdel(cols);
         return ok;
 }
-
-/*
-func MakeQuery(connection unsafe.Pointer) (query unsafe.Pointer) {
-        return C.xtcrdb_qrynew(connection);
-}
-*/
 
 func (connection *Connection) MakeQuery() (query *Query) {
         query = new(Query);
