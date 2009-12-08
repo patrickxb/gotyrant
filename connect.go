@@ -16,40 +16,41 @@
 
 package main
 
-import "tyrant"
-import "fmt"
+import (
+	"tyrant";
+	"fmt";
+	"os";
+)
 
 func main() {
-        fmt.Printf("trying to use tyrant package to connect to tokyo tyrant\n");
-        connection, ok := tyrant.Connect();
-        if !ok {
-                fmt.Printf("no connection...")
-        } else {
-                columns := make(map[string]string);
-                columns["name"] = "falcon";
-                columns["age"] = "31";
-                columns["lang"] = "ja";
-                if connection.Put("12345", columns) {
-                        fmt.Printf("put ok\n")
-                } else {
-                        fmt.Printf("put failed\n")
-                }
+	fmt.Printf("trying to use tyrant package to connect to tokyo tyrant\n");
+	connection, ok := tyrant.Connect();
+	if !ok {
+		fmt.Printf("no connection...\n");
+		os.Exit(1);
+	}
 
-                query := connection.MakeQuery();
-                query.AddCondition("name", tyrant.StringBeginsWith(), "f");
-                result := connection.Execute(query);
-                fmt.Printf("%d rows returned\n", len(result.Rows));
-                for index, row := range result.Rows {
-                        fmt.Printf("ROW %d ------------------\n", index);
-                        for name, value := range row.Data {
-                                fmt.Printf("%s => %s\n", name, value)
-                        }
-                        fmt.Printf("\n");
-                }
-        }
+	columns := make(map[string]string);
+	columns["name"] = "falcon";
+	columns["age"] = "31";
+	columns["lang"] = "ja";
+	if connection.Put("12345", columns) {
+		fmt.Printf("put ok\n")
+	} else {
+		fmt.Printf("put failed\n")
+	}
 
-        // not sure why this doesn't work:
-        //        tyrant.Close(connection);
+	query := connection.MakeQuery();
+	query.AddCondition("name", tyrant.StringBeginsWith(), "f");
+	result := connection.Execute(query);
+	fmt.Printf("%d rows returned\n", len(result.Rows));
+	for index, row := range result.Rows {
+		fmt.Printf("ROW %d ------------------\n", index);
+		for name, value := range row.Data {
+			fmt.Printf("%s => %s\n", name, value)
+		}
+		fmt.Printf("\n");
+	}
 
-        fmt.Printf("done\n");
+	fmt.Printf("done\n");
 }
