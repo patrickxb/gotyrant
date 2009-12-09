@@ -103,7 +103,6 @@ func (connection *Connection) Create(primaryKey string, columns ColumnMap) (ok b
 }
 
 func (connection *Connection) Get(primaryKey string) *ColumnMap {
-        fmt.Printf("Get[%s]\n", primaryKey);
         cols := C.xtcrdb_tblget(connection.Tyrant, C.CString(primaryKey));
         if cols == nil {
                 return nil
@@ -163,7 +162,6 @@ func (connection *Connection) Execute(query *Query) SearchResult {
         rows := make([]Row, list_size);
         for i := 0; i < list_size; i++ {
                 pk := C.xtc_listval(list, _C_int(i));
-                fmt.Printf("pk = %v\n", C.GoString(pk));
                 cols := C.xtcrdb_tblget(connection.Tyrant, pk);
                 if cols != nil {
                         var row Row;
