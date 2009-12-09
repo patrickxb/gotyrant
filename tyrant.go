@@ -86,13 +86,14 @@ func (connection *Connection) Put(primary_key string, columns ColumnMap) (ok boo
 }
 
 // If record exists with this key, nothing happens
-func (connection *Connection) Create(primary_key string, columns ColumnMap) (ok bool) {
+func (connection *Connection) Create(primaryKey string, columns ColumnMap) (ok bool) {
+        fmt.Printf("Create[%s]\n", primaryKey);
         ok = true;
         cols := C.xtc_mapnew();
         for name, value := range columns {
                 C.xtc_mapput(cols, C.CString(name), C.CString(value))
         }
-        if C.xtcrdb_tblputkeep(connection.Tyrant, C.CString(primary_key), cols) == 0 {
+        if C.xtcrdb_tblputkeep(connection.Tyrant, C.CString(primaryKey), cols) == 0 {
                 connection.ErrorDisplay();
                 ok = false;
         }
@@ -101,19 +102,22 @@ func (connection *Connection) Create(primary_key string, columns ColumnMap) (ok 
         return ok;
 }
 
-func (connection *Connection) Get(primaryKey string) (result *ColumnMap) {
+func (connection *Connection) Get(primaryKey string) *ColumnMap {
+        fmt.Printf("Get[%s]\n", primaryKey);
         cols := C.xtcrdb_tblget(connection.Tyrant, C.CString(primaryKey));
-        if cols != nil {
-                result := make(ColumnMap);
-                result["PKEY"] = primaryKey;
-                C.xtc_mapiterinit(cols);
-                name := C.xtc_mapiternext2(cols);
-                for name != nil {
-                        result[C.GoString(name)] = C.GoString(C.xtc_mapget2(cols, name));
-                        name = C.xtc_mapiternext2(cols);
-                }
+        if cols == nil {
+                return nil
         }
-        return result;
+
+        result := make(ColumnMap);
+        result["PKEY"] = primaryKey;
+        C.xtc_mapiterinit(cols);
+        name := C.xtc_mapiternext2(cols);
+        for name != nil {
+                result[C.GoString(name)] = C.GoString(C.xtc_mapget2(cols, name));
+                name = C.xtc_mapiternext2(cols);
+        }
+        return &result;
 }
 
 func (connection *Connection) MakeQuery() (query *Query) {
@@ -159,6 +163,7 @@ func (connection *Connection) Execute(query *Query) SearchResult {
         rows := make([]Row, list_size);
         for i := 0; i < list_size; i++ {
                 pk := C.xtc_listval(list, _C_int(i));
+                fmt.Printf("pk = %v\n", C.GoString(pk));
                 cols := C.xtcrdb_tblget(connection.Tyrant, pk);
                 if cols != nil {
                         var row Row;
