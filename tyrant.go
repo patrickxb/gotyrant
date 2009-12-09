@@ -40,7 +40,7 @@ func (connection *Connection) ErrorDisplay() {
 	fmt.Printf("TT Error:  " + connection.ErrorMessage() + "\n")
 }
 
-func Connect() (connection *Connection, ok bool) {
+func Connect(host string, port int) (connection *Connection, ok bool) {
 	connection = new(Connection);
 	connection.Tyrant = C.xtcrdb_new();
 	open := C.xtcrdb_open(connection.Tyrant, C.CString("localhost"), 1978);
@@ -53,6 +53,10 @@ func Connect() (connection *Connection, ok bool) {
 		ok = true;
 	}
 	return connection, ok;
+}
+
+func ConnectDefault() (Connection *Connection, ok bool) {
+        return Connect("localhost", 1978);
 }
 
 func (connection *Connection) Close() {

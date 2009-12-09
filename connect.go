@@ -24,7 +24,7 @@ import (
 
 func main() {
 	fmt.Printf("trying to use tyrant package to connect to tokyo tyrant\n");
-	connection, ok := tyrant.Connect();
+	connection, ok := tyrant.ConnectDefault();
 	if !ok {
 		fmt.Printf("no connection...\n");
 		os.Exit(1);
