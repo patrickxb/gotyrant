@@ -17,40 +17,40 @@
 package main
 
 import (
-	"tyrant";
-	"fmt";
-	"os";
+        "tyrant";
+        "fmt";
+        "os";
 )
 
 func main() {
-	fmt.Printf("trying to use tyrant package to connect to tokyo tyrant\n");
-	connection, ok := tyrant.ConnectDefault();
-	if !ok {
-		fmt.Printf("no connection...\n");
-		os.Exit(1);
-	}
+        fmt.Printf("trying to use tyrant package to connect to tokyo tyrant\n");
+        connection, ok := tyrant.ConnectDefault();
+        if !ok {
+                fmt.Printf("no connection...\n");
+                os.Exit(1);
+        }
 
-	columns := make(map[string]string);
-	columns["name"] = "falcon";
-	columns["age"] = "31";
-	columns["lang"] = "ja";
-	if connection.Put("12345", columns) {
-		fmt.Printf("put ok\n")
-	} else {
-		fmt.Printf("put failed\n")
-	}
+        columns := make(map[string]string);
+        columns["name"] = "falcon";
+        columns["age"] = "31";
+        columns["lang"] = "ja";
+        if connection.Put("12345", columns) {
+                fmt.Printf("put ok\n")
+        } else {
+                fmt.Printf("put failed\n")
+        }
 
-	query := connection.MakeQuery();
-	query.AddCondition("name", tyrant.StringBeginsWith(), "f");
-	result := connection.Execute(query);
-	fmt.Printf("%d rows returned\n", len(result.Rows));
-	for index, row := range result.Rows {
-		fmt.Printf("ROW %d ------------------\n", index);
-		for name, value := range row.Data {
-			fmt.Printf("%s => %s\n", name, value)
-		}
-		fmt.Printf("\n");
-	}
+        query := connection.MakeQuery();
+        query.AddCondition("name", tyrant.StringBeginsWith(), "f");
+        result := connection.Execute(query);
+        fmt.Printf("%d rows returned\n", len(result.Rows));
+        for index, row := range result.Rows {
+                fmt.Printf("ROW %d ------------------\n", index);
+                for name, value := range row.Data {
+                        fmt.Printf("%s => %s\n", name, value)
+                }
+                fmt.Printf("\n");
+        }
 
-	fmt.Printf("done\n");
+        fmt.Printf("done\n");
 }
