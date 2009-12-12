@@ -24,9 +24,9 @@ import (
 
 func main() {
         fmt.Printf("trying to use tyrant package to connect to tokyo tyrant\n");
-        connection, ok := tyrant.ConnectDefault();
-        if !ok {
-                fmt.Printf("no connection...\n");
+        connection, err := tyrant.ConnectDefault();
+        if err != nil {
+                fmt.Printf("no connection: %s\n", err.String());
                 os.Exit(1);
         }
 
@@ -34,10 +34,9 @@ func main() {
         columns["name"] = "falcon";
         columns["age"] = "31";
         columns["lang"] = "ja";
-        if connection.Put("12345", columns) {
-                fmt.Printf("put ok\n")
-        } else {
-                fmt.Printf("put failed\n")
+        err = connection.Put("12345", columns);
+        if err != nil {
+                fmt.Printf("put failed: %s\n", err.String());
         }
 
         query := connection.MakeQuery();

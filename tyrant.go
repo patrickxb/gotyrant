@@ -21,8 +21,11 @@ package tyrant
 // #include "ttwrapper.h"
 import "C"
 
-import "fmt"
-import "unsafe"
+import (
+        "fmt";
+        "os";
+        "unsafe";
+       ) 
 
 type Connection struct {
         Tyrant unsafe.Pointer;
@@ -40,66 +43,63 @@ func (connection *Connection) ErrorDisplay() {
         fmt.Printf("TT Error:  " + connection.ErrorMessage() + "\n")
 }
 
-func Connect(host string, port int) (connection *Connection, ok bool) {
+func Connect(host string, port int) (connection *Connection, err os.Error) {
         connection = new(Connection);
         connection.Tyrant = C.xtcrdb_new();
         open := C.xtcrdb_open(connection.Tyrant, C.CString("localhost"), 1978);
         if open == 0 {
                 fmt.Printf("couldn't open database\n");
                 connection.ErrorDisplay();
-                ok = false;
-        } else {
-                fmt.Printf("connected to database localhost:1978\n");
-                ok = true;
-        }
-        return connection, ok;
+                return nil, os.NewError(connection.ErrorMessage());
+        } 
+        fmt.Printf("connected to database localhost:1978\n");
+        
+        return connection, nil;
 }
 
-func ConnectDefault() (Connection *Connection, ok bool) {
+func ConnectDefault() (Connection *Connection, err os.Error) {
         return Connect("localhost", 1978)
 }
 
-func (connection *Connection) Close() {
+func (connection *Connection) Close() os.Error {
         ok := C.xtcrdb_close(connection.Tyrant);
         if ok == 0 {
-                connection.ErrorDisplay()
+                return os.NewError(connection.ErrorMessage());
         }
 
         C.xtcrdb_del(connection.Tyrant);
+
+        return nil;
 }
 
 // If record exists with this key, it is overwritten
-func (connection *Connection) Put(primary_key string, columns ColumnMap) (ok bool) {
+func (connection *Connection) Put(primary_key string, columns ColumnMap) (err os.Error) {
         fmt.Printf("storing %v => %v\n", primary_key, columns);
-        ok = true;
         cols := C.xtc_mapnew();
         for name, value := range columns {
                 C.xtc_mapput(cols, C.CString(name), C.CString(value))
         }
         if C.xtcrdb_tblput(connection.Tyrant, C.CString(primary_key), cols) == 0 {
-                connection.ErrorDisplay();
-                ok = false;
+                return os.NewError(connection.ErrorMessage());
         }
         // XXX use 'defer' for this?
         C.xtc_mapdel(cols);
-        return ok;
+        return nil;
 }
 
 // If record exists with this key, nothing happens
-func (connection *Connection) Create(primaryKey string, columns ColumnMap) (ok bool) {
+func (connection *Connection) Create(primaryKey string, columns ColumnMap) (err os.Error) {
         fmt.Printf("Create[%s]\n", primaryKey);
-        ok = true;
         cols := C.xtc_mapnew();
         for name, value := range columns {
                 C.xtc_mapput(cols, C.CString(name), C.CString(value))
         }
         if C.xtcrdb_tblputkeep(connection.Tyrant, C.CString(primaryKey), cols) == 0 {
-                connection.ErrorDisplay();
-                ok = false;
+                return os.NewError(connection.ErrorMessage());
         }
         // XXX use 'defer' for this?
         C.xtc_mapdel(cols);
-        return ok;
+        return nil;
 }
 
 func (connection *Connection) Get(primaryKey string) *ColumnMap {
