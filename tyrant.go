@@ -25,7 +25,7 @@ import (
         "fmt";
         "os";
         "unsafe";
-       ) 
+)
 
 type Connection struct {
         Tyrant unsafe.Pointer;
@@ -51,9 +51,9 @@ func Connect(host string, port int) (connection *Connection, err os.Error) {
                 fmt.Printf("couldn't open database\n");
                 connection.ErrorDisplay();
                 return nil, os.NewError(connection.ErrorMessage());
-        } 
+        }
         fmt.Printf("connected to database localhost:1978\n");
-        
+
         return connection, nil;
 }
 
@@ -64,7 +64,7 @@ func ConnectDefault() (Connection *Connection, err os.Error) {
 func (connection *Connection) Close() os.Error {
         ok := C.xtcrdb_close(connection.Tyrant);
         if ok == 0 {
-                return os.NewError(connection.ErrorMessage());
+                return os.NewError(connection.ErrorMessage())
         }
 
         C.xtcrdb_del(connection.Tyrant);
@@ -80,7 +80,7 @@ func (connection *Connection) Put(primary_key string, columns ColumnMap) (err os
                 C.xtc_mapput(cols, C.CString(name), C.CString(value))
         }
         if C.xtcrdb_tblput(connection.Tyrant, C.CString(primary_key), cols) == 0 {
-                return os.NewError(connection.ErrorMessage());
+                return os.NewError(connection.ErrorMessage())
         }
         // XXX use 'defer' for this?
         C.xtc_mapdel(cols);
@@ -95,7 +95,7 @@ func (connection *Connection) Create(primaryKey string, columns ColumnMap) (err 
                 C.xtc_mapput(cols, C.CString(name), C.CString(value))
         }
         if C.xtcrdb_tblputkeep(connection.Tyrant, C.CString(primaryKey), cols) == 0 {
-                return os.NewError(connection.ErrorMessage());
+                return os.NewError(connection.ErrorMessage())
         }
         // XXX use 'defer' for this?
         C.xtc_mapdel(cols);

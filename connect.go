@@ -36,7 +36,7 @@ func main() {
         columns["lang"] = "ja";
         err = connection.Put("12345", columns);
         if err != nil {
-                fmt.Printf("put failed: %s\n", err.String());
+                fmt.Printf("put failed: %s\n", err.String())
         }
 
         query := connection.MakeQuery();
