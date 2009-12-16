@@ -73,6 +73,7 @@ func (connection *Connection) Close() os.Error {
 }
 
 // If record exists with this key, it is overwritten
+// XXX use 'defer' for mapdel?
 func (connection *Connection) Put(primary_key string, columns ColumnMap) (err os.Error) {
         fmt.Printf("storing %v => %v\n", primary_key, columns);
         cols := C.xtc_mapnew();
@@ -82,12 +83,12 @@ func (connection *Connection) Put(primary_key string, columns ColumnMap) (err os
         if C.xtcrdb_tblput(connection.Tyrant, C.CString(primary_key), cols) == 0 {
                 return os.NewError(connection.ErrorMessage())
         }
-        // XXX use 'defer' for this?
         C.xtc_mapdel(cols);
         return nil;
 }
 
 // If record exists with this key, nothing happens
+// XXX use 'defer' for mapdel?
 func (connection *Connection) Create(primaryKey string, columns ColumnMap) (err os.Error) {
         fmt.Printf("Create[%s]\n", primaryKey);
         cols := C.xtc_mapnew();
@@ -97,7 +98,6 @@ func (connection *Connection) Create(primaryKey string, columns ColumnMap) (err 
         if C.xtcrdb_tblputkeep(connection.Tyrant, C.CString(primaryKey), cols) == 0 {
                 return os.NewError(connection.ErrorMessage())
         }
-        // XXX use 'defer' for this?
         C.xtc_mapdel(cols);
         return nil;
 }
