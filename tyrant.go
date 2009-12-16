@@ -24,6 +24,7 @@ import "C"
 import (
         "fmt";
         "os";
+        "strconv";
         "unsafe";
 )
 
@@ -179,4 +180,18 @@ func (connection *Connection) Execute(query *Query) SearchResult {
         var result SearchResult;
         result.Rows = rows;
         return result;
+}
+
+func (cmap *ColumnMap) GetInt64(key string) (int64, os.Error) {
+        frow := *cmap;
+        s, ok := frow[key];
+        if !ok {
+                //return 0, os.NewError("'%s' not found in column map", key);
+                return 0, os.NewError("key not found in column map");
+        }
+        result, err := strconv.Atoi64(s);
+        if err != nil {
+                return 0, os.NewError("error converting column to int");
+        }
+        return result, nil;
 }
