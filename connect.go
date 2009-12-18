@@ -29,6 +29,7 @@ func main() {
                 fmt.Printf("no connection: %s\n", err.String());
                 os.Exit(1);
         }
+        defer connection.Close()
 
         columns := make(map[string]string);
         columns["name"] = "falcon";
@@ -59,6 +60,41 @@ func main() {
         }
         count = query.Count()
         fmt.Printf("count after remove: %d\n", count)
+        
+        columns["name"] = "falcon";
+        columns["age"] = "31";
+        columns["lang"] = "ja";
+        err = connection.Put("12345", columns);
+        if err != nil {
+                fmt.Printf("put failed: %s\n", err.String())
+        }
+        columns["name"] = "jackson";
+        columns["age"] = "19";
+        columns["lang"] = "ja";
+        err = connection.Put("2345", columns);
+        if err != nil {
+                fmt.Printf("put failed: %s\n", err.String())
+        }
+        columns["name"] = "bacon";
+        columns["age"] = "57";
+        columns["lang"] = "ja";
+        err = connection.Put("345", columns);
+        if err != nil {
+                fmt.Printf("put failed: %s\n", err.String())
+        }
+        q := connection.MakeQuery();
+        q.AddCondition("lang", tyrant.StringEqual(), "ja");
+        q.SetOrder("age", tyrant.OrderNumAsc());
+        result = connection.Execute(q);
+        fmt.Printf("%d rows returned\n", len(result.Rows));
+        for index, row := range result.Rows {
+                fmt.Printf("ROW %d ------------------\n", index);
+                for name, value := range row.Data {
+                        fmt.Printf("%s => %s\n", name, value)
+                }
+                fmt.Printf("\n");
+        }
+         
 
         fmt.Printf("done\n");
 }
