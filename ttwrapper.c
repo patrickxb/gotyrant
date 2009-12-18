@@ -158,10 +158,22 @@ xtcrdb_qrysetlimit(void* query, int limit, int offset)
         tcrdbqrysetlimit(query, limit, offset);
 }
 
+void 
+xtcrdb_qrysetorder(void* query, const char* column_name, int order)
+{
+        tcrdbqrysetorder(query, column_name, order);
+}
+
 void*
 xtcrdb_qrysearch(void* query)
 {
         return tcrdbqrysearch(query);
+}
+
+int
+xtcrdb_qrysearchout(void* query)
+{
+        return tcrdbqrysearchout(query);
 }
 
 int 
@@ -172,29 +184,16 @@ xtcrdb_qrysearchcount(void* query)
 
 /* Tokyo Tyrant query conditions */
 
-int 
-x_streq() 
-{
-        return RDBQCSTREQ;
-}
+int x_streq() { return RDBQCSTREQ; }
+int x_strinc() { return RDBQCSTRINC; }
+int x_strbw() { return RDBQCSTRBW; }
+int x_numlt() { return RDBQCNUMLT; }
 
-int
-x_strinc()
-{
-        return RDBQCSTRINC;
-}
+/* Tokyo Tyrant query orders */
 
-int
-x_strbw()
-{
-        return RDBQCSTRBW;
-}
-
-int 
-x_numlt()
-{
-        return RDBQCNUMLT;
-}
-
+int x_strasc() { return RDBQOSTRASC; }
+int x_strdesc() { return RDBQOSTRDESC; }
+int x_numasc() { return RDBQONUMASC; }
+int x_numdesc() { return RDBQONUMDESC; }
 
 

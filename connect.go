@@ -53,5 +53,12 @@ func main() {
                 fmt.Printf("\n");
         }
 
+        err = query.Remove()
+        if err != nil {
+                fmt.Printf("error removing: %s\n", err)
+        }
+        count = query.Count()
+        fmt.Printf("count after remove: %d\n", count)
+
         fmt.Printf("done\n");
 }

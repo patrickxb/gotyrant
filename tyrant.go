@@ -134,6 +134,11 @@ func StringBeginsWith() int { return int(C.x_strbw()) }
 
 func NumLessThan() int { return int(C.x_numlt()) }
 
+func OrderStrAsc() int { return int(C.x_strasc()) }
+func OrderStrDesc() int { return int(C.x_strdesc()) }
+func OrderNumAsc() int { return int(C.x_numasc()) }
+func OrderNumDesc() int { return int(C.x_numdesc()) }
+
 func (query *Query) AddCondition(column_name string, op int, expression string) {
         fmt.Printf("adding condition on column '%s', operation = %d, expression = '%s'\n",
                 column_name, op, expression);
@@ -142,6 +147,14 @@ func (query *Query) AddCondition(column_name string, op int, expression string) 
 
 func (query *Query) SetLimit(limit int) {
         C.xtcrdb_qrysetlimit(query.Tyrant, _C_int(limit), 0)
+}
+
+func (query *Query) SetLimitOffset(limit int, offset int) {
+        C.xtcrdb_qrysetlimit(query.Tyrant, _C_int(limit), _C_int(offset))
+}
+
+func (query *Query) SetOrder(columnName string, order int) {
+        C.xtcrdb_qrysetorder(query.Tyrant, C.CString(columnName), _C_int(order));
 }
 
 type ColumnMap map[string]string
@@ -185,6 +198,15 @@ func (connection *Connection) Execute(query *Query) SearchResult {
 func (query *Query) Count() int {
         result := C.xtcrdb_qrysearchcount(query.Tyrant);
         return int(result);
+}
+
+// Removes all records that match the query
+func (query *Query) Remove() os.Error {
+        result := C.xtcrdb_qrysearchout(query.Tyrant);
+        if result == 0 {
+                return os.ErrorString("Error removing records")
+        }
+        return nil
 }
 
 func (cmap *ColumnMap) GetInt64(key string) (int64, os.Error) {

@@ -48,7 +48,9 @@ int xtcrdb_tblputkeep(void* rdb, const char* pkey, void* cols);
 void* xtcrdb_qrynew(void* rdb);
 void xtcrdb_qryaddcond(void* query, const char* column_name, int operation, const char* expression);
 void xtcrdb_qrysetlimit(void* query, int limit, int offset);
+void xtcrdb_qrysetorder(void* query, const char* column_name, int order);
 void* xtcrdb_qrysearch(void* query);
+int xtcrdb_qrysearchout(void* query);
 int xtcrdb_qrysearchcount(void* query);
 
 /* Tokyo Tyrant query conditions */
@@ -56,5 +58,11 @@ int x_streq();
 int x_strinc();
 int x_strbw();
 int x_numlt();
+
+/* Tokyo Tyrant query orders */
+int x_strasc();
+int x_strdesc();
+int x_numasc();
+int x_numdesc();
 
 #endif
