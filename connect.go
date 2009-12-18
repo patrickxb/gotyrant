@@ -41,6 +41,8 @@ func main() {
 
         query := connection.MakeQuery();
         query.AddCondition("name", tyrant.StringBeginsWith(), "f");
+        count := query.Count();
+        fmt.Printf("count = %d\n", count);
         result := connection.Execute(query);
         fmt.Printf("%d rows returned\n", len(result.Rows));
         for index, row := range result.Rows {

@@ -164,6 +164,12 @@ xtcrdb_qrysearch(void* query)
         return tcrdbqrysearch(query);
 }
 
+int 
+xtcrdb_qrysearchcount(void* query)
+{
+        return tcrdbqrysearchcount(query);
+}
+
 /* Tokyo Tyrant query conditions */
 
 int 

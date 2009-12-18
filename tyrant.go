@@ -182,6 +182,11 @@ func (connection *Connection) Execute(query *Query) SearchResult {
         return result;
 }
 
+func (query *Query) Count() int {
+        result := C.xtcrdb_qrysearchcount(query.Tyrant);
+        return int(result);
+}
+
 func (cmap *ColumnMap) GetInt64(key string) (int64, os.Error) {
         frow := *cmap;
         s, ok := frow[key];
