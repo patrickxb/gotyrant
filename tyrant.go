@@ -36,6 +36,10 @@ type Query struct {
         Tyrant unsafe.Pointer;
 }
 
+func (connection *Connection) ErrorCode() int {
+        return int(C.xtcrdb_ecode(connection.Tyrant));
+}
+
 func (connection *Connection) ErrorMessage() string {
         return C.GoString(C.xtcrdb_errmsg(C.xtcrdb_ecode(connection.Tyrant)))
 }
@@ -74,33 +78,34 @@ func (connection *Connection) Close() os.Error {
 }
 
 // If record exists with this key, it is overwritten
-// XXX use 'defer' for mapdel?
 func (connection *Connection) Put(primary_key string, columns ColumnMap) (err os.Error) {
         fmt.Printf("storing %v => %v\n", primary_key, columns);
         cols := C.xtc_mapnew();
+        defer C.xtc_mapdel(cols);
         for name, value := range columns {
                 C.xtc_mapput(cols, C.CString(name), C.CString(value))
         }
         if C.xtcrdb_tblput(connection.Tyrant, C.CString(primary_key), cols) == 0 {
                 return os.NewError(connection.ErrorMessage())
         }
-        C.xtc_mapdel(cols);
         return nil;
 }
 
 // If record exists with this key, nothing happens
-// XXX use 'defer' for mapdel?
-func (connection *Connection) Create(primaryKey string, columns ColumnMap) (err os.Error) {
+func (connection *Connection) Create(primaryKey string, columns ColumnMap) (exists bool, err os.Error) {
         fmt.Printf("Create[%s]\n", primaryKey);
         cols := C.xtc_mapnew();
+        defer C.xtc_mapdel(cols);
         for name, value := range columns {
                 C.xtc_mapput(cols, C.CString(name), C.CString(value))
         }
         if C.xtcrdb_tblputkeep(connection.Tyrant, C.CString(primaryKey), cols) == 0 {
-                return os.NewError(connection.ErrorMessage())
+                if connection.ErrorCode() != ErrCodeKeep() {
+                        return exists, os.NewError(connection.ErrorMessage())
+                }
+                exists = true
         }
-        C.xtc_mapdel(cols);
-        return nil;
+        return exists, nil;
 }
 
 func (connection *Connection) Get(primaryKey string) *ColumnMap {
@@ -127,17 +132,16 @@ func (connection *Connection) MakeQuery() (query *Query) {
 }
 
 func StringEqual() int { return int(C.x_streq()) }
-
 func StringIncluded() int { return int(C.x_strinc()) }
-
 func StringBeginsWith() int { return int(C.x_strbw()) }
-
 func NumLessThan() int { return int(C.x_numlt()) }
 
 func OrderStrAsc() int { return int(C.x_strasc()) }
 func OrderStrDesc() int { return int(C.x_strdesc()) }
 func OrderNumAsc() int { return int(C.x_numasc()) }
 func OrderNumDesc() int { return int(C.x_numdesc()) }
+
+func ErrCodeKeep() int { return int(C.x_errcode_keep()) }
 
 func (query *Query) AddCondition(column_name string, op int, expression string) {
         fmt.Printf("adding condition on column '%s', operation = %d, expression = '%s'\n",

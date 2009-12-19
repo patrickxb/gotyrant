@@ -65,4 +65,7 @@ int x_strdesc();
 int x_numasc();
 int x_numdesc();
 
+/* Tokyo Tyrant error codes */
+int x_errcode_keep();
+
 #endif

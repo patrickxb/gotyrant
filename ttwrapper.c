@@ -196,4 +196,6 @@ int x_strdesc() { return RDBQOSTRDESC; }
 int x_numasc() { return RDBQONUMASC; }
 int x_numdesc() { return RDBQONUMDESC; }
 
+/* Tokyo Tyrant error codes */
+int x_errcode_keep() { return TTEKEEP; }
 
