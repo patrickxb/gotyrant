@@ -146,19 +146,20 @@ func ErrCodeKeep() int { return int(C.x_errcode_keep()) }
 func (query *Query) AddCondition(column_name string, op int, expression string) {
         fmt.Printf("adding condition on column '%s', operation = %d, expression = '%s'\n",
                 column_name, op, expression);
-        C.xtcrdb_qryaddcond(query.Tyrant, C.CString(column_name), _C_int(op), C.CString(expression));
+        // C.xtcrdb_qryaddcond(query.Tyrant, C.CString(column_name), _C_int(op), C.CString(expression));
+        C.xtcrdb_qryaddcond(query.Tyrant, C.CString(column_name), C.int(op), C.CString(expression));
 }
 
 func (query *Query) SetLimit(limit int) {
-        C.xtcrdb_qrysetlimit(query.Tyrant, _C_int(limit), 0)
+        C.xtcrdb_qrysetlimit(query.Tyrant, C.int(limit), 0)
 }
 
 func (query *Query) SetLimitOffset(limit int, offset int) {
-        C.xtcrdb_qrysetlimit(query.Tyrant, _C_int(limit), _C_int(offset))
+        C.xtcrdb_qrysetlimit(query.Tyrant, C.int(limit), C.int(offset))
 }
 
 func (query *Query) SetOrder(columnName string, order int) {
-        C.xtcrdb_qrysetorder(query.Tyrant, C.CString(columnName), _C_int(order));
+        C.xtcrdb_qrysetorder(query.Tyrant, C.CString(columnName), C.int(order));
 }
 
 type ColumnMap map[string]string
@@ -179,7 +180,7 @@ func (connection *Connection) Execute(query *Query) SearchResult {
         fmt.Printf("list size: %d\n", list_size);
         rows := make([]Row, list_size);
         for i := 0; i < list_size; i++ {
-                pk := C.xtc_listval(list, _C_int(i));
+                pk := C.xtc_listval(list, C.int(i));
                 cols := C.xtcrdb_tblget(connection.Tyrant, pk);
                 if cols != nil {
                         var row Row;

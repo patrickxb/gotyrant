@@ -1,10 +1,11 @@
 
-include $(GOROOT)/src/Make.$(GOARCH)
+include $(GOROOT)/src/Make.inc
 
 TARG=tyrant
 CGOFILES=\
 	 tyrant.go
-CGO_LDFLAGS=ttwrapper.o -ltokyotyrant
+#CGO_LDFLAGS=ttwrapper.o -ltokyotyrant
+CGO_LDFLAGS=-ltokyotyrant
 
 
 CLEANFILES+=connect
