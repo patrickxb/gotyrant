@@ -197,6 +197,7 @@ func (connection *Connection) Execute(query *Query) SearchResult {
         }
         var result SearchResult;
         result.Rows = rows;
+        result.Count = list_size;
         return result;
 }
 
