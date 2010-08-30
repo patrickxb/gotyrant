@@ -51,13 +51,13 @@ func (connection *Connection) ErrorDisplay() {
 func Connect(host string, port int) (connection *Connection, err os.Error) {
         connection = new(Connection);
         connection.Tyrant = C.xtcrdb_new();
-        open := C.xtcrdb_open(connection.Tyrant, C.CString("localhost"), 1978);
+        open := C.xtcrdb_open(connection.Tyrant, C.CString(host), C.int(port));
         if open == 0 {
-                fmt.Printf("couldn't open database\n");
+                fmt.Printf("couldn't open database %s:%d\n", host, port);
                 connection.ErrorDisplay();
                 return nil, os.NewError(connection.ErrorMessage());
         }
-        fmt.Printf("connected to database localhost:1978\n");
+        fmt.Printf("connected to database %s:%d\n", host, port);
 
         return connection, nil;
 }
