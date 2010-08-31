@@ -188,6 +188,7 @@ int x_streq() { return RDBQCSTREQ; }
 int x_strinc() { return RDBQCSTRINC; }
 int x_strbw() { return RDBQCSTRBW; }
 int x_numlt() { return RDBQCNUMLT; }
+int x_stror() { return RDBQCSTROR; }
 
 /* Tokyo Tyrant query orders */
 

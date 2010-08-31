@@ -135,6 +135,7 @@ func StringEqual() int { return int(C.x_streq()) }
 func StringIncluded() int { return int(C.x_strinc()) }
 func StringBeginsWith() int { return int(C.x_strbw()) }
 func NumLessThan() int { return int(C.x_numlt()) }
+func IncludesToken() int { return int(C.x_stror()) }
 
 func OrderStrAsc() int { return int(C.x_strasc()) }
 func OrderStrDesc() int { return int(C.x_strdesc()) }

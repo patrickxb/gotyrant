@@ -58,6 +58,7 @@ int x_streq();
 int x_strinc();
 int x_strbw();
 int x_numlt();
+int x_stror();
 
 /* Tokyo Tyrant query orders */
 int x_strasc();
