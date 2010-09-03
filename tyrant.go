@@ -177,6 +177,8 @@ type SearchResult struct {
 }
 
 // XXX: just return a Vector of map[string] string...
+// XXX: this is using search, then getting each individual record....very slow...try ExecuteGet below
+// XXX: assuming ExecuteGet proves to work, it will eventually replace this one...
 func (connection *Connection) Execute(query *Query) SearchResult {
         list := C.xtcrdb_qrysearch(query.Tyrant);
         list_size := int(C.xtc_listnum(list));
@@ -189,6 +191,32 @@ func (connection *Connection) Execute(query *Query) SearchResult {
                         var row Row;
                         row.Data = make(ColumnMap);
                         row.Data["PKEY"] = C.GoString(pk);
+                        C.xtc_mapiterinit(cols);
+                        name := C.xtc_mapiternext2(cols);
+                        for name != nil {
+                                row.Data[C.GoString(name)] = C.GoString(C.xtc_mapget2(cols, name));
+                                name = C.xtc_mapiternext2(cols);
+                        }
+                        rows[i] = row;
+                }
+        }
+        var result SearchResult;
+        result.Rows = rows;
+        result.Count = list_size;
+        return result;
+}
+
+func (connection *Connection) ExecuteGet(query *Query) SearchResult {
+        list := C.xtcrdb_qrysearchget(query.Tyrant);
+        list_size := int(C.xtc_listnum(list));
+        fmt.Printf("list size: %d\n", list_size);
+        rows := make([]Row, list_size);
+        for i := 0; i < list_size; i++ {
+                cols := C.xtcrdb_qryrescols(list, C.int(i));
+                if cols != nil {
+                        var row Row;
+                        row.Data = make(ColumnMap);
+                        // row.Data["PKEY"] = C.GoString(pk);
                         C.xtc_mapiterinit(cols);
                         name := C.xtc_mapiternext2(cols);
                         for name != nil {

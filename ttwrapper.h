@@ -50,6 +50,8 @@ void xtcrdb_qryaddcond(void* query, const char* column_name, int operation, cons
 void xtcrdb_qrysetlimit(void* query, int limit, int offset);
 void xtcrdb_qrysetorder(void* query, const char* column_name, int order);
 void* xtcrdb_qrysearch(void* query);
+void* xtcrdb_qrysearchget(void* query);
+void* xtcrdb_qryrescols(void* res, int index);
 int xtcrdb_qrysearchout(void* query);
 int xtcrdb_qrysearchcount(void* query);
 

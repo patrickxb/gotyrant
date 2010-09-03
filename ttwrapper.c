@@ -170,6 +170,18 @@ xtcrdb_qrysearch(void* query)
         return tcrdbqrysearch(query);
 }
 
+void*
+xtcrdb_qrysearchget(void* query)
+{
+        return tcrdbqrysearchget(query);
+}
+
+void*
+xtcrdb_qryrescols(void* res, int index)
+{
+        return tcrdbqryrescols(res, index);
+}
+
 int
 xtcrdb_qrysearchout(void* query)
 {
