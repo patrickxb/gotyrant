@@ -59,10 +59,12 @@ int xtcrdb_qrysearchcount(void* query);
 int x_streq();
 int x_strinc();
 int x_strbw();
+int x_stror();
 int x_numlt();
 int x_numeq();
 int x_numgt();
-int x_stror();
+int x_numge();
+int x_numle();
 
 /* Tokyo Tyrant query orders */
 int x_strasc();

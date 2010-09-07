@@ -135,7 +135,9 @@ func StringEqual() int { return int(C.x_streq()) }
 func StringIncluded() int { return int(C.x_strinc()) }
 func StringBeginsWith() int { return int(C.x_strbw()) }
 func NumLessThan() int { return int(C.x_numlt()) }
+func NumLessThanEqual() int { return int(C.x_numle()) }
 func NumEqual() int { return int(C.x_numeq()) }
+func NumGreaterThanEqual() int { return int(C.x_numge()) }
 func NumGreaterThan() int { return int(C.x_numgt()) }
 func IncludesToken() int { return int(C.x_stror()) }
 

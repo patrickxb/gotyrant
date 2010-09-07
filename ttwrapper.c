@@ -199,10 +199,12 @@ xtcrdb_qrysearchcount(void* query)
 int x_streq() { return RDBQCSTREQ; }
 int x_strinc() { return RDBQCSTRINC; }
 int x_strbw() { return RDBQCSTRBW; }
-int x_numlt() { return RDBQCNUMLT; }
-int x_numeq() { return RDBQCNUMEQ; }
-int x_numgt() { return RDBQCNUMGT; }
 int x_stror() { return RDBQCSTROR; }
+int x_numlt() { return RDBQCNUMLT; }
+int x_numle() { return RDBQCNUMLE; }
+int x_numeq() { return RDBQCNUMEQ; }
+int x_numge() { return RDBQCNUMGE; }
+int x_numgt() { return RDBQCNUMGT; }
 
 /* Tokyo Tyrant query orders */
 
